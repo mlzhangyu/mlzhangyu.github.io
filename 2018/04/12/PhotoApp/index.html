@@ -87,7 +87,7 @@
 <meta property="og:site_name" content="youngfisher">
 <meta property="og:description" content="UICollectionView使用注意事项 初始化UICollectionView的时候一定要指定布局参数，因为UICollectionView所有的配置（包括item的frame、center、item之间的空隙、流动方向、边距、偏移等信息）都需要由UICollectionViewLayout对象来完成 UICollectionView一定要通过注册的方式来得到UICollectionV">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-04-12T11:56:37.000Z">
+<meta property="og:updated_time" content="2018-04-13T05:43:41.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="UICollectionView自定义布局对象">
 <meta name="twitter:description" content="UICollectionView使用注意事项 初始化UICollectionView的时候一定要指定布局参数，因为UICollectionView所有的配置（包括item的frame、center、item之间的空隙、流动方向、边距、偏移等信息）都需要由UICollectionViewLayout对象来完成 UICollectionView一定要通过注册的方式来得到UICollectionV">
@@ -358,7 +358,7 @@
 <li>UICollectionViewCell类一定要自定义，系统的cell没有任何子控件</li>
 <li>当需要完成比较复杂的操作时，比如在滑动过程中修改item的大小，则需要自定义布局UICollectionViewLayout对象，通过重写该对象的一些方法来达到要求，后文会有案例</li>
 </ul>
-<h2 id="自定义UICollectionViewLayout对象"><a href="#自定义UICollectionViewLayout对象" class="headerlink" title="自定义UICollectionViewLayout对象"></a>自定义UICollectionViewLayout对象</h2><p>对于自定义布局对象，我们应该了解布局对象的5个方法</p>
+<h2 id="自定义UICollectionViewLayout对象"><a href="#自定义UICollectionViewLayout对象" class="headerlink" title="自定义UICollectionViewLayout对象"></a>自定义UICollectionViewLayout对象</h2><p>对于自定义布局对象，我们应该了解布局对象的4个方法</p>
 <ol>
 <li>- (void)prepareLayout方法<ul>
 <li>什么时候调用:只要UICollectionView的约束更新（更改view的大小）、collectionView第一次布局</li>
@@ -370,8 +370,6 @@
  <figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"> - (<span class="built_in">NSArray</span>&lt;<span class="built_in">UICollectionViewLayoutAttributes</span> *&gt; *)layoutAttributesForElementsInRect:(<span class="built_in">CGRect</span>)rect &#123;</div><div class="line">    <span class="comment">// 此处attrs是NSMutableArray对象，但是不能直接修改attrs，否则会报警告</span></div><div class="line">    <span class="built_in">NSArray</span> *attrs = [<span class="keyword">super</span> layoutAttributesForElementsInRect:<span class="keyword">self</span>.collectionView.bounds];</div><div class="line">    <span class="comment">// 要将attrs深拷贝给copyAttrs</span></div><div class="line">    <span class="built_in">NSArray</span> *copyAttrs = [[<span class="built_in">NSArray</span> alloc] initWithArray:attrs copyItems:<span class="literal">YES</span>];</div><div class="line">    <span class="comment">// 下面是通过访问attrs里面的属性，来修改cell的属性</span></div><div class="line">    <span class="keyword">return</span> copyAttrs;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 </li>
 <li><p>最终偏移函数</p>
-</li>
-</ol>
 <ul>
 <li>什么时候调用：手指离开屏幕的时候调用</li>
 <li>分析：<ul>
@@ -385,10 +383,9 @@
 </ul>
 </li>
 </ul>
-<ol>
-<li>滚动时（约束布局变化时）是否允许刷新布局，默认是NO。返回YES时，只要布局在改变，则以上2方法一直调用（所以可以在该方法中调整想要调整的cell），直到滑动停止。1、3方法调用一次<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">- (<span class="built_in">BOOL</span>)        shouldInvalidateLayoutForBoundsChange:(<span class="built_in">CGRect</span>)newBounds&#123;</div><div class="line">    <span class="keyword">return</span> <span class="literal">YES</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 </li>
 </ol>
+<p>四.  滚动时（约束布局变化时）是否允许刷新布局，默认是NO。返回YES时，只要布局在改变，则以上2方法一直调用（所以可以在该方法中调整想要调整的cell），直到滑动停止。1、3方法调用一次<br>    <figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">- (<span class="built_in">BOOL</span>)        shouldInvalidateLayoutForBoundsChange:(<span class="built_in">CGRect</span>)newBounds&#123;</div><div class="line">    <span class="keyword">return</span> <span class="literal">YES</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
 <p><strong>以上就是自定义UICollectionViewLayout的基本方法，了解到来这些，我们就能够不仅仅拘泥于简单的布局，此时就能对UICollectionView做一些复杂的操作了。</strong></p>
 <p>我也做了一个类似图片浏览器的例子，在我的github上。</p>
 <p>## 参考</p>
